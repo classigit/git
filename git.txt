@@ -1,0 +1,114 @@
+Create branch 
+	git branch <branch>
+
+Create branch and switch to it
+	git checkout -b <name> == git branch <name> + git checkout <name>
+
+Delete branch 
+	git branch -D <branch>
+
+Merge from X branch to current branch
+	git merge <X branch>
+
+Checkout switches branches and sets HEAD to the latest commit
+
+This will switch to the commit and set your state into detached HEAD, means you're not part of a branch now
+git checkout <commit_hash>
+
+List files in the index/staging are and the working tree (files after git add <>)
+	git-ls-files
+
+Revert unstaged changes - go back to the HEAD in the current branch
+	git checkout <file>
+	git checkout .
+
+Remove untracked files (before git add)
+	git clean -dn // just show what would be removed
+	git clean -df //actually remove
+
+Removed staged changes (after git add)
+	//need 2 commands
+	git reset <file>
+	git checkout <file>
+
+Remove last commit:
+	git reset --soft HEAD~1 // uncommit changes, changes are left staged (index).
+	git reset HEAD~1 // default also called --mixed uncommit + unstage changes, changes are left in working tree.
+	git reset --hard HEAD~1 // uncommit + unstage + delete changes, nothing left.
+
+Stash the changes in a dirty working directory away
+	git list // list stashed entries
+	git stash
+	git pop // Remove a single stashed state from the stash list and apply it on top of the current working tree state
+	git apply //Like pop, but do not remove the state from the stash li
+	git apply <index> // you can see indexes in git list
+	git stash push -m "message" // stash and add message that will be seen in git list
+	git stash drop <index> // delete stashed entry
+	git stash clear // delete all entries
+================================================================================================
+Newer git 2.2.3:
+Switch branch
+	git switch ////newer version of git checkout
+Create branch 
+	git switch -c <name> ////newer version of git checkout -b <name>
+Revert unstaged changes
+	git restore <file> //newer version of git checkout <file>
+	git restore . //newer version of git checkout .
+Removed staged changes (after git add)
+	//need 2 commands
+	git restore --staged <file> //newer version of git reset <file>
+	git checkout <file>
+
+================================================================================================
+If you need to add changes when you're in detached HEAD you need to create a new branch and merge it
+	git checkout <commit_hash> //now in detached mode
+	..make changes
+	git add . && git commit -m "msg" // add and commit your changes
+	git branch -c <temp_branch> //create temp branch for your changes
+	git switch <your_branch>
+	git merge <temp_branch> //merge temp branch to your branch
+	git branch -D <temp_branch> // delete tmp branch  
+================================================================================================
+
+---MERGE---
+1.Fast forward merge can be performed if the branch we merge from have few commits on top of our branch latest commit and there
+are no new commits in our branch
+
+master branch  X-X-X|
+		     		|
+feature branch X-X-X-T-T 
+
+We can fast forward merge from feature branch to master branch.    
+In fast-forward merge, git simply moves the source branch pointer to the target branch pointer without creating merge commit.
+
+3. git merge --squash feature // takes all changes in all new commits in feature branch and adds it to current branch without committing, you'll need to commit yourself
+2.Recursive merge - if you have changes both on the master and the feature branch 'git merge feature' will preform recursive merge and a new merge commit will be added
+
+---REBASE---
+REBASING CREATES NEW COMMITS - same content but different hashes
+
+When to use rebase:
+a) When working on a feature branch and your code relies on latest commits in the master branch
+b) You're done implementing in feature branch and you'd like to merge to the master without merge commit
+
+While working on the feature branch and making few commits you would like to bring all the newly added commits on the master branch to your branch so you run:
+1. git rebase master
+
+master branch  X-X-X|-Y
+		     		|
+feature branch X-X-X-T-T
+
+after the rebase you'll have X-X-X-Y-T-T 
+
+
+
+================================================================================================
+Cherry-Pick : Add specific commit to the branch (HEAD) - copies commit with new ID
+git cherry-pick <commit_id>
+================================================================================================
+Tagging
+git tag //show tags
+git tag <tag name> <commid id> //adds tag to commit
+git tag -d <tag name> //delete tag
+================================================================================================
+
